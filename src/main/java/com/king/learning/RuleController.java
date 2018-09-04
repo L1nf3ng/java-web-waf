@@ -70,9 +70,6 @@ public class RuleController{
 
     @RequestMapping(value="/add", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public RuleList addRule(@RequestBody RuleList newList){
-        System.out.println("************************************");
-        System.out.println("*----------------------------------*");
-        System.out.println("what you get is: "+newList.getNum()+" rules!");
         totalRules.setNum( totalRules.getNum()+newList.getNum() );
         totalRules.addRules( newList.getRules() );
         return totalRules;
