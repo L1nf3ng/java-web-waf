@@ -4,11 +4,13 @@ public class Rule{
     private int id;
     private String content;
 
+    public Rule(){}
+
     public Rule(int i, String s){
         id = i;
         content = s;
     }
-
+    
     public int getId(){
         return id;
     }

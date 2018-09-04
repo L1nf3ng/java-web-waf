@@ -7,12 +7,13 @@ import com.king.learning.POJOs.RuleList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.List;
-
 import java.util.ArrayList;
 
 import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,17 +29,17 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 基于文件IO实现与openresty-waf的交互
  *************************************/
 
-//@RestController
-@Controller
+ //@Controller
+@RestController
 @RequestMapping("/rules")
 public class RuleController{
 
-    private RuleList rules;
+    private RuleList totalRules;
 
     public RuleController()throws Exception{
         // Open file and read Rules
         Config config = new Config();
-        rules = new RuleList();
+        totalRules = new RuleList();
         List<Rule> ruleList = new ArrayList<Rule>();
         int num = 1;
         BufferedReader read = new BufferedReader(new FileReader(config.getFilePath()+config.getFileName()));
@@ -51,14 +52,8 @@ public class RuleController{
             num++;
         } 
         read.close();
-        rules.setRules(ruleList);
-    }
-
-//  @RequestMapping(value="/", produces= MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value="/")
-    public String display(Model model){
-        model.addAttribute("rules",rules.getRules());
-        return "rulePage";
+        totalRules.setRules(ruleList);
+        totalRules.setNum(ruleList.size());
     }
 
     // Dynamic redirection to certain form 
@@ -67,25 +62,31 @@ public class RuleController{
         return FormName+"Form";
     }
 
-    @RequestMapping(value="/add", method= RequestMethod.POST)
-    public String addRule(@RequestParam("content") String ruleContent){
-        List<Rule> ringList = new ArrayList<Rule>(); 
-        Rule rule = new Rule(rules.getRules().size()+1, ruleContent);
-        ringList.add(rule);
-        rules.addRules(ringList);
-        return "redirect:/rules/";
+    @RequestMapping(value="/", produces= MediaType.APPLICATION_JSON_VALUE)
+    public RuleList display(Model model){
+        model.addAttribute("rules",totalRules.getRules());
+        return totalRules;
     }
 
-    @RequestMapping(value="/del", method= RequestMethod.POST)
-    public String deleteRule(@RequestParam("id") int id){
-        rules.getRules().remove(id-1);
-        return "redirect:/rules/";
+    @RequestMapping(value="/add", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
+    public RuleList addRule(@RequestBody RuleList newList){
+        System.out.println("************************************");
+        System.out.println("*----------------------------------*");
+        System.out.println("what you get is: "+newList.getNum()+" rules!");
+        totalRules.setNum( totalRules.getNum()+newList.getNum() );
+        totalRules.addRules( newList.getRules() );
+        return totalRules;
     }
 
-    @RequestMapping(value="/modify", method= RequestMethod.POST)
-    public String modifyRule(@RequestParam("id") int id, @RequestParam("content") String ruleContent){
-        rules.modifyRules(id, ruleContent);
-        return "redirect:/rules/";
+    @RequestMapping(value="/del", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
+    public RuleList deleteRule(@RequestBody RuleList delList){
+        return totalRules;
+    }
+
+    @RequestMapping(value="/modify", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
+    public RuleList modifyRule(@RequestParam("id") int id, @RequestParam("content") String ruleContent){
+        totalRules.modifyRules(id, ruleContent);
+        return totalRules;
     }
 
 };
