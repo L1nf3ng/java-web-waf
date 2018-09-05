@@ -9,7 +9,7 @@ A web GUI to configure waf based on nginx-lua module
 ③ http://127.0.0.1:8080/rules/del<br>
 ④ http://127.0.0.1:8080/rules/modify<br>
 
-
+注意：规则文件args.rule在项目一级目录下，在新环境配置时需要修改com/king/learning/constants/Config.java中的参数。<br>
 与前端页面的接口如下示（Json格式）：<br>
 
 ## 1 显示数据
@@ -27,7 +27,6 @@ A web GUI to configure waf based on nginx-lua module
             {id:5, content:xwork\.MethodAccessor},
         ]
     }
-
 ## 2 添加数据
 应用场景：用户点击添加按钮弹出新表单，该表单可扩展性添加多条数据。<br>
 请求url地址：②<br>
@@ -94,3 +93,7 @@ A web GUI to configure waf based on nginx-lua module
             {id:3, content:\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\[},
         ]
     }
+
+## 接口演示
+如下图所示：<br>
+![all_in_one](https://i.imgur.com/4epVAnm.gif)

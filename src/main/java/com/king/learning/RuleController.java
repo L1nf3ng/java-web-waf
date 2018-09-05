@@ -11,12 +11,7 @@ import java.util.ArrayList;
 
 import org.springframework.ui.Model;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /*************************************
  * 编写5个功能，分别是:
@@ -77,12 +72,14 @@ public class RuleController{
 
     @RequestMapping(value="/del", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
     public RuleList deleteRule(@RequestBody RuleList delList){
+        totalRules.setNum( totalRules.getNum()-delList.getNum() );
+        totalRules.delRules( delList.getRules() );
         return totalRules;
     }
 
     @RequestMapping(value="/modify", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
-    public RuleList modifyRule(@RequestParam("id") int id, @RequestParam("content") String ruleContent){
-        totalRules.modifyRules(id, ruleContent);
+    public RuleList modifyRule(@RequestBody RuleList modiList){
+        totalRules.modifyRules( modiList.getRules() );
         return totalRules;
     }
 

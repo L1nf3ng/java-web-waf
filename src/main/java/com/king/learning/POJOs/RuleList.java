@@ -42,12 +42,17 @@ public class RuleList{
         adjustArray();
     }
     public void delRules(List<Rule> s){
-        rules.removeAll(s);
+        for( Rule rule: s){
+            int id = rule.getId();
+            rules.remove(id-1);
+        }
         adjustArray();
     }
-    public void modifyRules(int index, String s){
-        Rule t = new Rule(index, s);
-        rules.set(index-1, t);
+    public void modifyRules(List<Rule> s){
+        for( Rule rule:s ){
+            int id = rule.getId();
+            rules.set(id-1, rule);
+        }
         adjustArray();
     }
 }
