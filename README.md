@@ -85,28 +85,27 @@ A web GUI to configure waf based on nginx-lua module
             {"id":7, "content":"\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\["},
         ]
     }
-（为了方便书写，接下来的json数据省去字符串的双引号）<br>
 
 ## 4 删除数据
 应用场景：用户选中打算删除的规则，点击删除按钮后提交规则id号。<br>
 请求url地址：④<br>
 请求参数如下：<br>
 
-    {   pageNo:7,
-        num:2,
+    {   "pageNo":7,
+        "num":2,
         [
-            id:1，
-            id:4,
+            "id":1，
+            "id":4,
         ]
     }
 返回参数如下：<br>
 
-    {   pageNo:7,
-        num:3,
+    {   "pageNo":7,
+        "num":3,
         [
-            {id:1, content:base64\(},
-            {id:2, content:\:\$},
-            {id:3, content:xwork\.MethodAccessor},
+            {"id":1, "content":"base64\("},
+            {"id":2, "content":"\:\$"},
+            {"id":3, "content":"xwork\.MethodAccessor"},
         ]
     }
 
@@ -115,21 +114,21 @@ A web GUI to configure waf based on nginx-lua module
 请求url地址：⑤<br>
 请求参数如下：<br>
 
-    {   pageNo:7,
-        num:2,
+    {   "pageNo":7,
+        "num":2,
         [
-            {id:1，content:(gopher|doc|php|glob|file|phar|zlib|ftp|ldap|dict|ogg|data)\:\/},
-            {id:3, content:\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\[},
+            {"id":1，"content":"(gopher|doc|php|glob|file|phar|zlib|ftp|ldap|dict|ogg|data)\:\/"},
+            {"id":3, "content":"\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\["},
         ]
     }
 返回参数如下：<br>
 
-    {   pageNo:7,
-        num:3,
+    {   "pageNo":7,
+        "num":3,
         [
-            {id:1, content:(gopher|doc|php|glob|file|phar|zlib|ftp|ldap|dict|ogg|data)\:\/},
-            {id:2, content:\:\$},
-            {id:3, content:\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\[},
+            {"id":1, "content":"(gopher|doc|php|glob|file|phar|zlib|ftp|ldap|dict|ogg|data)\:\/"},
+            {"id":2, "content":"\:\$"},
+            {"id":3, "content":"\$_(GET|post|cookie|files|session|env|phplib|GLOBALS|SERVER)\["},
         ]
     }
 
