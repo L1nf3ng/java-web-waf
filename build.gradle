@@ -26,6 +26,7 @@ repositories {
 
 
 dependencies {
+	complie 'org.porjectlombok:lombok'
 	compile 'javax.servlet:jstl:1.2'
 	compile 'org.apache.tomcat.embed:tomcat-embed-jasper' 
 	compile('org.springframework.boot:spring-boot-starter-web')

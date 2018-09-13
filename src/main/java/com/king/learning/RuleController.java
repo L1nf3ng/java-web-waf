@@ -1,15 +1,11 @@
 package com.king.learning;
 
 import com.king.learning.constants.Config;
-import com.king.learning.POJOs.Rule;
-import com.king.learning.POJOs.RuleList;
+import com.king.learning.POJOs.Page;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.List;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
-import org.springframework.ui.Model;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,63 +20,92 @@ import org.springframework.web.bind.annotation.*;
  * 基于文件IO实现与openresty-waf的交互
  *************************************/
 
- //@Controller
+class MetaInfo{
+    private int page_num;
+    private Map<Integer, String> name_list;
+
+    public MetaInfo(int s, Map<Integer, String> d){
+        page_num = s;
+        name_list = d;
+    }
+
+    public int getPageNum(){
+        return page_num;
+    }
+    public void setPageNum(int s ){
+        page_num = s;
+    }
+    public Map<Integer,String> getNameList(){
+        return name_list;
+    }
+    public void setNameList(Map<Integer, String> s){
+        name_list = s;
+    }
+}
+
 @RestController
 @RequestMapping("/rules")
 public class RuleController{
 
-    private RuleList totalRules;
+    private MetaInfo metainfo;
+    private List<Page> pageLists;
 
     public RuleController()throws Exception{
-        // Open file and read Rules
-        Config config = new Config();
-        totalRules = new RuleList();
-        List<Rule> ruleList = new ArrayList<Rule>();
-        int num = 1;
-        BufferedReader read = new BufferedReader(new FileReader(config.getFilePath()+config.getFileName()));
-        String line = null;
-        while ( (line = read.readLine()) != null ){
-        //  String newLine = "#rule"+Integer.toString(num) + "# " + line.replace("\\", "");
-            String newLine= line;
-            Rule rule = new Rule(num, newLine);
-            ruleList.add(rule);
-            num++;
-        } 
-        read.close();
-        totalRules.setRules(ruleList);
-        totalRules.setNum(ruleList.size());
+        // 1st Step , initialize MetaInfo object! 
+        int page_num = 0;
+        Map<Integer, String> names = new HashMap<Integer, String>();
+        pageLists = new ArrayList<Page>();
+        File file = new File(Config.filePath);    
+        for (String filename: file.list()) {
+            String catalog = filename.substring(0, filename.indexOf("."));
+            names.put(page_num+1, catalog);
+            Page page1 = new Page(page_num+1, Config.filePath + filename);
+            page1.restore();
+            pageLists.add(page1);
+            page_num ++;
+        }
+        metainfo = new MetaInfo(page_num, names);
     }
 
-    // Dynamic redirection to certain form 
-    @RequestMapping(value="/{FormName}", method= RequestMethod.GET)
-    public String DynamicJump( @PathVariable("FormName") String FormName){
-        return FormName+"Form";
-    }
-
+    // 返回元数据Meta-Info，其中包含分类数和分类名称
     @RequestMapping(value="/", produces= MediaType.APPLICATION_JSON_VALUE)
-    public RuleList display(Model model){
-        model.addAttribute("rules",totalRules.getRules());
-        return totalRules;
+    public MetaInfo display(){
+        return metainfo;
     }
 
+    // 查询接口，依据Json中的page_no来确定返回页的内容
+    @RequestMapping(value="/select", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
+    public Page selectRule(@RequestBody Page newPage){
+        // 列表中的下标比pageNO小1
+        int currentNo = newPage.getPageNo()-1;
+        Page page = pageLists.get(currentNo);
+        return page;
+    }
+
+    // 添加接口
     @RequestMapping(value="/add", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
-    public RuleList addRule(@RequestBody RuleList newList){
-        totalRules.setNum( totalRules.getNum()+newList.getNum() );
-        totalRules.addRules( newList.getRules() );
-        return totalRules;
+    public Page addRule(@RequestBody Page newPage){
+        Page page = pageLists.get(newPage.getPageNo()-1);
+        page.setNum( page.getNum()+newPage.getNum() );
+        page.addRules(newPage.getRules());
+        return page;
     }
 
+    // 删除接口
     @RequestMapping(value="/del", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
-    public RuleList deleteRule(@RequestBody RuleList delList){
-        totalRules.setNum( totalRules.getNum()-delList.getNum() );
-        totalRules.delRules( delList.getRules() );
-        return totalRules;
+    public Page deleteRule(@RequestBody Page delPage){
+        Page page = pageLists.get(delPage.getPageNo()-1);
+        page.setNum( page.getNum()-delPage.getNum() );
+        page.delRules( delPage.getRules() );
+        return page;
     }
 
+    // 修改接口
     @RequestMapping(value="/modify", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
-    public RuleList modifyRule(@RequestBody RuleList modiList){
-        totalRules.modifyRules( modiList.getRules() );
-        return totalRules;
+    public Page modifyRule(@RequestBody Page modPage){
+        Page page = pageLists.get(modPage.getPageNo()-1);
+        page.modifyRules( modPage.getRules() );
+        return page;
     }
 
-};
+}
