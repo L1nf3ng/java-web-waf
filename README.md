@@ -17,7 +17,6 @@ A web GUI to configure waf based on nginx-lua module
 ④ http://127.0.0.1:8080/rules/del<br>
 ⑤ http://127.0.0.1:8080/rules/modify<br>
 
-注意：规则文件在项目一级目录的rule-config下，在新环境配置时需要修改com/king/learning/constants/Config.java中的参数。<br>
 与前端页面的接口如下示（Json格式）：<br>
 
 ## 1 获取元数据
