@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * 基于文件IO实现与openresty-waf的交互
  *************************************/
 
-class MetaInfo{
+ class MetaInfo{
     private int page_num;
     private Map<Integer, String> name_list;
 
